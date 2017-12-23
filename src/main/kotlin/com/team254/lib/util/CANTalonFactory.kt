@@ -1,4 +1,4 @@
-package frc.team1018.lib.util
+package com.team254.lib.util
 
 import edu.wpi.first.wpilibj.MotorSafety
 

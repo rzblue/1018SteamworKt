@@ -17,4 +17,6 @@ object Constants {
     const val kLeftEncoderChA = 6
     const val kLeftEncoderChB = 7
 
+    const val kIsFieldOrientedDefault = false
+
 }

@@ -1,12 +1,16 @@
 package frc.team1018.steamworksKotlin.subsystems
 
 import com.ctre.CANTalon
+import com.kauailabs.navx.frc.AHRS
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const
 import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.RobotDrive
-import frc.team1018.lib.util.CANTalonFactory
+import com.team254.lib.util.CANTalonFactory
+import edu.wpi.first.wpilibj.SPI
+import frc.team1018.lib.util.MecanumDriveSignal
 import frc.team1018.steamworksKotlin.Constants
+import frc.team1018.steamworksKotlin.loops.Loop
 import frc.team1018.steamworksKotlin.loops.Looper
-
 
 object Drivetrain: Subsystem() {
     private val frontLeftMotor = CANTalonFactory.createDefaultTalon(Constants.kFrontLeftDriveId).apply {
@@ -31,23 +35,84 @@ object Drivetrain: Subsystem() {
         reset()
     }
 
+    private val navX = AHRS(SPI.Port.kMXP)
+
+    var isFieldOriented: Boolean = Constants.kIsFieldOrientedDefault
+
     private val driveHelper = RobotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor).apply {
         isSafetyEnabled = false
     }
 
+
+    var brakeMode = false
+        set(value) {
+            frontRightMotor.enableBrakeMode(value)
+            frontLeftMotor.enableBrakeMode(value)
+            rearLeftMotor.enableBrakeMode(value)
+            rearRightMotor.enableBrakeMode(value)
+            field = value
+        }
+
+    private val mDriveControlState: DriveControlState = DriveControlState.OPEN_LOOP_MECANUM
+
+    private val mLoop = object : Loop {
+        override fun onStart(timestamp: Double) {
+            synchronized(this@Drivetrain) {
+                setOpenLoop(MecanumDriveSignal.NEUTRAL)
+
+            }
+        }
+
+        override fun onLoop(timestamp: Double) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun onStop(timestamp: Double) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+    }
+
+
+    init {
+        setOpenLoop(MecanumDriveSignal.NEUTRAL)
+
+    }
+    enum class DriveControlState{
+        OPEN_LOOP_MECANUM,
+        TURN_TO_HEADING
+
+    }
+
+    @Synchronized fun setOpenLoop(signal: MecanumDriveSignal) {
+        if(mDriveControlState != DriveControlState.OPEN_LOOP_MECANUM) {
+            frontLeftMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus)
+            frontRightMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus)
+            rearLeftMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus)
+            rearRightMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus)
+            brakeMode = false
+        }
+        driveHelper.mecanumDrive_Cartesian(signal.x, signal.y, signal.z, if(isFieldOriented) navX.yaw.toDouble() else 0.0)
+    }
+
+    fun resetEncoders() {
+        leftEncoder.reset()
+        rightEncoder.reset()
+    }
+
     override fun outputToSmartDashboard() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun stop() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        setOpenLoop(MecanumDriveSignal.NEUTRAL)
     }
 
     override fun zeroSensors() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        resetEncoders()
+        navX.reset()
     }
 
     override fun registerEnabledLoops(enabledLooper: Looper) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 }
