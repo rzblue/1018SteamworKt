@@ -9,7 +9,7 @@ import frc.team1018.steamworksKotlin.loops.Looper
 /**
  * @author Ryan Blue
  */
-object Climber: Subsystem() {
+object Climber : Subsystem() {
     private val topMotor = TalonSRX(Constants.kClimberTopPwm)
     private val bottomMotor = TalonSRX(Constants.kClimberBottomPwm).apply {
         inverted = true
@@ -31,7 +31,7 @@ object Climber: Subsystem() {
     }
 
     val isFinishedClimbing: Boolean
-        get() = averageCurrent  > Constants.kClimberStopCurrent
+        get() = averageCurrent > Constants.kClimberStopCurrent
 
     val averageCurrent: Double
         get() = (PowerDistributionPanel().getCurrent(Constants.kClimberTopPdp) +
@@ -40,7 +40,7 @@ object Climber: Subsystem() {
     private var mSystemState = SystemState.STOPPED
     var wantedState = WantedState.STOP
 
-    private val mLoop = object: Loop {
+    private val mLoop = object : Loop {
         override fun onStart(timestamp: Double) {
             mSystemState = SystemState.STOPPED
             wantedState = WantedState.STOP

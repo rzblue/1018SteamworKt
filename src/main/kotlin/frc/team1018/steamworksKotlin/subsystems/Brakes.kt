@@ -7,7 +7,7 @@ import frc.team1018.steamworksKotlin.loops.Looper
 /**
  * @author Ryan Blue
  */
-object Brakes: Subsystem() {
+object Brakes : Subsystem() {
     private val mBrakesSolenoid = DoubleSolenoid(Constants.kBrakesForwardSlnd, Constants.kBrakesReverseSlnd)
 
     init {

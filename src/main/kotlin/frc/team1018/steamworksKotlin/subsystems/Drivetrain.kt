@@ -61,7 +61,7 @@ object Drivetrain : Subsystem() {
         }
 
         override fun onLoop(timestamp: Double) {
-            when (mDriveControlState) {
+            when(mDriveControlState) {
                 DriveControlState.OPEN_LOOP_MECANUM -> return
                 DriveControlState.TURN_TO_HEADING -> return
             }
@@ -93,14 +93,14 @@ object Drivetrain : Subsystem() {
 
     @Synchronized
     fun setOpenLoop(signal: MecanumDriveSignal) {
-        if (mDriveControlState != DriveControlState.OPEN_LOOP_MECANUM) {
+        if(mDriveControlState != DriveControlState.OPEN_LOOP_MECANUM) {
             frontLeftMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus)
             frontRightMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus)
             rearLeftMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus)
             rearRightMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus)
             brakeMode = false
         }
-        driveHelper.mecanumDrive_Cartesian(signal.x, signal.y, signal.z, if (isFieldOriented) navX.yaw.toDouble() else 0.0)
+        driveHelper.mecanumDrive_Cartesian(signal.x, signal.y, signal.z, if(isFieldOriented) navX.yaw.toDouble() else 0.0)
     }
 
     fun resetEncoders() {

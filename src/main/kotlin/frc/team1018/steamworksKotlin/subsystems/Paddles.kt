@@ -7,7 +7,7 @@ import frc.team1018.steamworksKotlin.loops.Looper
 /**
  * @author Ryan Blue
  */
-object Paddles: Subsystem() {
+object Paddles : Subsystem() {
     private val mPaddlesSolenoid = DoubleSolenoid(Constants.kPaddlesForwardSlnd, Constants.kPaddlesReverseSlnd)
 
     init {

@@ -5,7 +5,7 @@ import frc.team1018.steamworksKotlin.loops.Looper
 import frc.team1018.steamworksKotlin.subsystems.*
 import java.util.*
 
-object Robot: IterativeRobot() {
+object Robot : IterativeRobot() {
     private val mDrivetrain = Drivetrain
     private val mClimber = Climber
     private val mBrakes = Brakes
@@ -40,7 +40,7 @@ object Robot: IterativeRobot() {
             mControlBoard.climbDownButton -> Climber.WantedState.CLIMB_DOWN
             else -> Climber.WantedState.STOP
         }
-        
+
         if(mControlBoard.paddlesInButton) {
             mPaddles.retract()
         } else {

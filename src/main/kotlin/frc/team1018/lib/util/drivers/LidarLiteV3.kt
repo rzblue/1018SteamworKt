@@ -3,8 +3,8 @@ package frc.team1018.lib.util.drivers
 import edu.wpi.first.wpilibj.I2C
 import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.Timer
-import kotlin.concurrent.thread
 import java.nio.ByteBuffer
+import kotlin.concurrent.thread
 
 /**
  * @author Ryan Blue
@@ -67,7 +67,7 @@ class LidarLiteV3(port: I2C.Port, address: Int) {
     }
 
     private fun updateDistance(): Int {
-        val command = if (measurementCount % 100 == 0) LIDAR_COMMAND_ACQUIRE_WITH_CORRECTION else LIDAR_COMMAND_ACQUIRE_WITHOUT_CORRECTION
+        val command = if(measurementCount % 100 == 0) LIDAR_COMMAND_ACQUIRE_WITH_CORRECTION else LIDAR_COMMAND_ACQUIRE_WITHOUT_CORRECTION
         i2c.write(LIDAR_CONFIG_REGISTER, command)
         measurementCount++
         var busyCount = 0
@@ -75,12 +75,12 @@ class LidarLiteV3(port: I2C.Port, address: Int) {
             Timer.delay(0.001)
             val status = readByte(LIDAR_STATUS_REGISTER)
             val busy = (status and LIDAR_BUSY_MASK) == LIDAR_BUSY_MASK
-            if (busy) {
+            if(busy) {
                 busyCount++
             } else {
                 return readShort(LIDAR_DISTANCE_REGISTER)
             }
-        } while (busyCount < RETRY_COUNT)
+        } while(busyCount < RETRY_COUNT)
         return distanceCm
     }
 

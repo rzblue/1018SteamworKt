@@ -7,7 +7,6 @@ import frc.team1018.lib.util.drivers.LidarLiteV3
 import frc.team1018.steamworksKotlin.Constants
 import frc.team1018.steamworksKotlin.loops.Loop
 import frc.team1018.steamworksKotlin.loops.Looper
-import kotlin.math.roundToInt
 
 /**
  * @author Ryan Blue
@@ -42,11 +41,11 @@ object GearRotator : Subsystem() {
     private var mSystemState = SystemState.WAITING
     var wantedState = WantedState.AUTOMATIC
         set(value) {
-            if (value == WantedState.FLIP_OVERRIDE) isCycleOverriden = true
+            if(value == WantedState.FLIP_OVERRIDE) isCycleOverriden = true
             field = value
         }
 
-    private val mLoop = object: Loop {
+    private val mLoop = object : Loop {
         override fun onStart(timestamp: Double) {
             synchronized(this@GearRotator) {
                 mSystemState = SystemState.WAITING
@@ -59,20 +58,20 @@ object GearRotator : Subsystem() {
             synchronized(this@GearRotator) {
                 if(enabled) {
                     val timeInState = timestamp - mCurrentStateStartTime
-                    if (isCycleOverriden) {
-                        if (wantedState == WantedState.FLIP_OVERRIDE) {
-                            mSystemState = SystemState.FLIP_OVERRIDE
+                    if(isCycleOverriden) {
+                        mSystemState = if(wantedState == WantedState.FLIP_OVERRIDE) {
+                            SystemState.FLIP_OVERRIDE
                         } else {
-                            mSystemState = SystemState.DONE
+                            SystemState.DONE
                         }
                     }
-                    val newState = when (mSystemState) {
+                    val newState = when(mSystemState) {
                         SystemState.WAITING -> handleWaiting()
                         SystemState.CORRECTING -> handleCorrecting(timeInState)
                         SystemState.DONE -> handleDone()
                         SystemState.FLIP_OVERRIDE -> handleOverride()
                     }
-                    if (newState != mSystemState) mCurrentStateStartTime = timestamp
+                    if(newState != mSystemState) mCurrentStateStartTime = timestamp
                     mSystemState = newState
                 } else {
                     wantedState = WantedState.AUTOMATIC
@@ -107,16 +106,16 @@ object GearRotator : Subsystem() {
 
     fun handleWaiting(): SystemState {
         isCycleOverriden = false
-        if(containsGear) {
-            return SystemState.CORRECTING
+        return if(containsGear) {
+            SystemState.CORRECTING
         } else {
-            return SystemState.WAITING
+            SystemState.WAITING
         }
     }
 
     fun handleCorrecting(timeInState: Double): SystemState {
-        if(isGearAligned) {
-            return SystemState.DONE
+        return if(isGearAligned) {
+            SystemState.DONE
         } else {
             val cycleNum = (timeInState / (kFlipDuration / 2.0)).toInt()
             if(cycleNum % 2 == 0) {
@@ -124,16 +123,19 @@ object GearRotator : Subsystem() {
             } else {
                 stopFlipping()
             }
-            return SystemState.CORRECTING
+            SystemState.CORRECTING
         }
     }
 
     fun handleDone(): SystemState {
         stopFlipping()
-        if(isGearOut) {
-            return SystemState.WAITING
+
+        return if(isGearOut) {
+            SystemState.WAITING
+        } else if(!isCycleOverriden && !isGearAligned) {
+            SystemState.CORRECTING
         } else {
-            return SystemState.DONE
+            SystemState.DONE
         }
     }
 
