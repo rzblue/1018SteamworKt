@@ -1,6 +1,7 @@
 package frc.team1018.steamworksKotlin
 
 import edu.wpi.first.wpilibj.Joystick
+import frc.team1018.lib.util.MecanumDriveSignal
 
 object ControlBoard {
     private val leftStick = Joystick(Constants.kLeftStickPort)
@@ -13,6 +14,9 @@ object ControlBoard {
         get() = leftStick.y
     val z: Double
         get() = rightStick.z
+    val latestDrivePacket: MecanumDriveSignal
+        get() = MecanumDriveSignal(x, y, z)
+
 
     val climbUpButton: Boolean
         get() = buttonPanel.getRawButton(2) && buttonPanel.getRawButton(16)
@@ -24,4 +28,5 @@ object ControlBoard {
         get() = buttonPanel.getRawButton(10)
     val gearRotatorButton: Boolean
         get() = buttonPanel.getRawButton(15)
+
 }
