@@ -48,7 +48,7 @@ object Climber: Subsystem() {
         }
 
         override fun onLoop(timestamp: Double) {
-            var newState: SystemState
+            val newState: SystemState
             newState = when(mSystemState) {
                 SystemState.STOPPED -> handleOff()
                 SystemState.CLIMBING_DOWN -> handleClimbingDown()

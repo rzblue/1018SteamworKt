@@ -1,5 +1,7 @@
 package frc.team1018.steamworksKotlin
 
+import frc.team1018.lib.util.drivers.LidarLiteV3
+
 object Constants {
     const val kLooperDt = 0.005
 
@@ -30,6 +32,9 @@ object Constants {
 
     const val kGearRotatorPwm = 4
     const val kGearRotatorBannerDio = 8
+
+    const val kContainsGearDistanceThreshold = 3
+    const val kIsGearOutDistanceThreshold = 6
 
     const val kBrakesReverseSlnd = 0
     const val kBrakesForwardSlnd = 1

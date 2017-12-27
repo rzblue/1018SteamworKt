@@ -63,6 +63,7 @@ object Drivetrain : Subsystem() {
         override fun onLoop(timestamp: Double) {
             when (mDriveControlState) {
                 DriveControlState.OPEN_LOOP_MECANUM -> return
+                DriveControlState.TURN_TO_HEADING -> return
             }
         }
 

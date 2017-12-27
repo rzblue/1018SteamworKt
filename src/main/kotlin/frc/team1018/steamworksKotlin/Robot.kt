@@ -2,10 +2,7 @@ package frc.team1018.steamworksKotlin
 
 import edu.wpi.first.wpilibj.IterativeRobot
 import frc.team1018.steamworksKotlin.loops.Looper
-import frc.team1018.steamworksKotlin.subsystems.Brakes
-import frc.team1018.steamworksKotlin.subsystems.Climber
-import frc.team1018.steamworksKotlin.subsystems.Drivetrain
-import frc.team1018.steamworksKotlin.subsystems.Paddles
+import frc.team1018.steamworksKotlin.subsystems.*
 import java.util.*
 
 object Robot: IterativeRobot() {
@@ -13,11 +10,13 @@ object Robot: IterativeRobot() {
     private val mClimber = Climber
     private val mBrakes = Brakes
     private val mPaddles = Paddles
+    private val mGearRotator = GearRotator
 
     private val mControlBoard = ControlBoard
 
-    private val mSubsystemManager = SubsystemManager(Arrays.asList(Drivetrain, Climber))
+    private val mSubsystemManager = SubsystemManager(Arrays.asList(Drivetrain, Climber, Brakes, Paddles, GearRotator))
     private val mEnabledLooper = Looper()
+
     override fun robotInit() {
         mSubsystemManager.registerEnabledLoops(mEnabledLooper)
         mSubsystemManager.zeroSensors()
@@ -28,6 +27,7 @@ object Robot: IterativeRobot() {
     }
 
     override fun teleopInit() {
+        mGearRotator.enabled = true
         mEnabledLooper.start()
         mPaddles.deploy()
     }
@@ -35,14 +35,12 @@ object Robot: IterativeRobot() {
     override fun teleopPeriodic() {
         mDrivetrain.setOpenLoop(mControlBoard.latestDrivePacket)
 
-        mClimber.wantedState = if(mControlBoard.climbUpButton) {
-            Climber.WantedState.CLIMB_UP
-        } else if(mControlBoard.climbDownButton) {
-            Climber.WantedState.CLIMB_DOWN
-        } else {
-            Climber.WantedState.STOP
+        mClimber.wantedState = when {
+            mControlBoard.climbUpButton -> Climber.WantedState.CLIMB_UP
+            mControlBoard.climbDownButton -> Climber.WantedState.CLIMB_DOWN
+            else -> Climber.WantedState.STOP
         }
-
+        
         if(mControlBoard.paddlesInButton) {
             mPaddles.retract()
         } else {
@@ -55,10 +53,16 @@ object Robot: IterativeRobot() {
             mBrakes.release()
         }
 
-
+        mGearRotator.wantedState = if(mControlBoard.gearRotatorButton) {
+            GearRotator.WantedState.FLIP_OVERRIDE
+        } else {
+            GearRotator.WantedState.AUTOMATIC
+        }
     }
 
+
     override fun autonomousInit() {
+        mGearRotator.enabled = false
         mEnabledLooper.start()
         mPaddles.retract()
     }
