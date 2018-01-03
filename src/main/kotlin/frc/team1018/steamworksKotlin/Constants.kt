@@ -33,7 +33,6 @@ object Constants {
 
     const val kContainsGearDistanceThreshold = 3
     const val kIsGearOutDistanceThreshold = 6
-    
 
     const val kBrakesReverseSlnd = 0
     const val kBrakesForwardSlnd = 1

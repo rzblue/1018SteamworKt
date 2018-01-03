@@ -17,6 +17,11 @@ object Robot : IterativeRobot() {
     private val mSubsystemManager = SubsystemManager(Arrays.asList(Drivetrain, Climber, Brakes, Paddles, GearRotator))
     private val mEnabledLooper = Looper()
 
+    init {
+        //Should I? They'll never know...
+        //HAL.report(FRCNetComm.tResourceType.kResourceType_Language, FRCNetComm.tInstances.kLanguage_LabVIEW)
+    }
+
     override fun robotInit() {
         mSubsystemManager.registerEnabledLoops(mEnabledLooper)
         mSubsystemManager.zeroSensors()
